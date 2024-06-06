@@ -6,10 +6,11 @@ I decided to write a script that will monitor this error and if it happens, rais
 
 So here is the guide
 
-**#creating a file for the restart counter**
+#**#creating a file for the restart counter**
+
 mkdir -p /var/log/docker/ && touch /var/log/docker/deploy-node-1_restart_count.log
 
-#create a script that will handle our startup
+**#create a script that will handle our startup**
 # and insert the code into it
 
 nano restart_container.sh
