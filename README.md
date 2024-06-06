@@ -21,8 +21,11 @@ chmod +x restart_container.sh
 
 **#Install tmux**
 
+
 sudo apt-get install tmux
+
 tmux new -s restart_container
+
 ./restart_container.sh
 
 **#To collapse session press CTRL+B , then D
