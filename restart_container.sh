@@ -1,42 +1,41 @@
 #!/bin/bash
 
-# Имя контейнера
+# Container name
 CONTAINER_NAME="deploy-node-1"
 
-# Фильтр ошибки
+# Error filter
 ERROR_FILTER="One of the blocks specified in filter"
 
-# Команда для перезапуска контейнера
+# Command to restart the container
 RESTART_COMMAND="docker restart ${CONTAINER_NAME}"
 
-# Файл для хранения количества перезапусков
+# File to store the number of restarts
 RESTART_COUNT_FILE="/var/log/docker/${CONTAINER_NAME}_restart_count.log"
 
-# Бесконечный цикл
+# Infinite loop
 while true; do
-    # Инициализация счетчика перезапусков
+    # Initialize restart counter if file does not exist
     if [ ! -f $RESTART_COUNT_FILE ]; then
         echo 0 > $RESTART_COUNT_FILE
     fi
 
-    # Чтение логов контейнера с конца (последние 5 строк) и следование за новыми записями
+    # Read container logs from the end (last 5 lines) and follow new entries
     docker logs --tail 5 -f $CONTAINER_NAME | while read line ; do
-        echo "Прочитанная строка: $line"  # Отладочная информация
+        echo "Line read: $line" # Debugging information
         echo "$line" | grep -q "$ERROR_FILTER"
-        if [ $? = 0 ]
-        then
-            echo "Ошибка обнаружена: $line"
-            echo "Перезапуск контейнера..."
+        if [ $? = 0 ]; then
+            echo "Error detected: $line"
+            echo "Restarting container..."
 
-            # Перезапуск контейнера
+            # Restarting container
             $RESTART_COMMAND
 
-            # Увеличение счетчика перезапусков
+            # Increment restart counter
             RESTART_COUNT=$(cat $RESTART_COUNT_FILE)
             RESTART_COUNT=$((RESTART_COUNT + 1))
             echo $RESTART_COUNT > $RESTART_COUNT_FILE
 
-            echo "Количество перезапусков: $RESTART_COUNT"
+            echo "Number of restarts: $RESTART_COUNT"
         fi
     done
 done
